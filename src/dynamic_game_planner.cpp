@@ -94,7 +94,6 @@ void DynamicGamePlanner::integrate(double* X_, const double* U_)
     int td;
     int ind;
     double s_ref;
-    double v_ref;
     double t;
     double s_t0[nX];
     double sr_t0[nX];
@@ -123,25 +122,14 @@ void DynamicGamePlanner::integrate(double* X_, const double* U_)
             sr_t0[x] = traffic[i].centerlane.spline_x(s_ref);
             sr_t0[y] =traffic[i].centerlane.spline_y(s_ref);
             sr_t0[psi] = traffic[i].centerlane.compute_heading(s_ref);
-
-            // Target speed:
-            v_ref = traffic[i].v_target;
+            sr_t0[v] = traffic[i].v_target; 
 
             // Input control:
             u_t0[d] = U_[tu + d];
             u_t0[F] = U_[tu + F];
             
-            // Derivatives: 
-            ds_t0[x] = s_t0[v] * cos(s_t0[psi] + cg_ratio * u_t0[d]);
-            ds_t0[y] = s_t0[v] * sin(s_t0[psi] + cg_ratio * u_t0[d]);
-            ds_t0[v] = (-1/tau) * s_t0[v] + (k) * u_t0[F];
-            ds_t0[psi] = s_t0[v] * tan(u_t0[d]) * cos(cg_ratio * u_t0[d])/ length;
-            ds_t0[l] = weight_target_speed * (s_t0[v] - v_ref) * (s_t0[v] - v_ref)
-                    + weight_center_lane * ((sr_t0[x] - s_t0[x]) * (sr_t0[x] - s_t0[x]) + (sr_t0[y] - s_t0[y]) * (sr_t0[y] - s_t0[y]))
-                    + weight_heading * ((std::cos(sr_t0[psi]) - std::cos(s_t0[psi]))*(std::cos(sr_t0[psi]) - std::cos(s_t0[psi]))
-                    +        (std::sin(sr_t0[psi]) - std::sin(s_t0[psi]))*(std::sin(sr_t0[psi]) - std::sin(s_t0[psi])))
-                    + weight_input * u_t0[F] * u_t0[F];
-            ds_t0[s] = s_t0[v];
+            // Dynamic step: 
+            dynamic_step(ds_t0, s_t0, sr_t0, u_t0);
 
             // Integration to compute the new state: 
             s_t0[x] += dt * ds_t0[x];
@@ -164,6 +152,22 @@ void DynamicGamePlanner::integrate(double* X_, const double* U_)
             t+= dt;
         }
     }
+}
+
+/** Dyanamic step */
+void DynamicGamePlanner::dynamic_step(double* d_state, const double* state, const double* ref_state, const double* control)
+{
+    /* Derivatives computation:*/
+    d_state[x] = state[v] * cos(state[psi] + cg_ratio * control[d]);
+    d_state[y] = state[v] * sin(state[psi] + cg_ratio * control[d]);
+    d_state[v] = (-1/tau) * state[v] + (k) * control[F];
+    d_state[psi] = state[v] * tan(control[d]) * cos(cg_ratio * control[d])/ length;
+    d_state[l] = weight_target_speed * (state[v] - ref_state[v]) * (state[v] - ref_state[v])
+            + weight_center_lane * ((ref_state[x] - state[x]) * (ref_state[x] - state[x]) + (ref_state[y] - state[y]) * (ref_state[y] - state[y]))
+            + weight_heading * ((std::cos(ref_state[psi]) - std::cos(state[psi]))*(std::cos(ref_state[psi]) - std::cos(state[psi]))
+            +        (std::sin(ref_state[psi]) - std::sin(state[psi]))*(std::sin(ref_state[psi]) - std::sin(state[psi])))
+            + weight_input * control[F] * control[F];
+    d_state[s] = state[v];
 }
 
 /** SR1 Hessian matrix update*/

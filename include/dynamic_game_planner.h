@@ -67,11 +67,13 @@ public:
     DynamicGamePlanner();  // Constructor
     ~DynamicGamePlanner(); // Destructor
 
-    void run( TrafficParticipants& traffic_state );                                  /** Main method to execute the planner */
-    void setup();                                                                  /** Setup function */
-    void initial_guess(double* X, double* U);                                      /** Set the initial guess */
-    void trust_region_solver(double* U_);                                          /** solver of the dynamic game based on trust region */
-    void integrate(double* X, const double* U);                                          /** Integration function */
+    void run( TrafficParticipants& traffic_state );                                 /** Main method to execute the planner */
+    void setup();                                                                   /** Setup function */
+    void initial_guess(double* X, double* U);                                       /** Set the initial guess */
+    void trust_region_solver(double* U_);                                           /** solver of the dynamic game based on trust region */
+    void integrate(double* X, const double* U);                                     /** Integration function */
+    void dynamic_step(double* d_state, const double* state, const double* ref_state, 
+                    const double* control);                                         /** Dynamic step function */
     void hessian_SR1_update( Eigen::MatrixXd & H_, const Eigen::MatrixXd & s_,            
                      const Eigen::MatrixXd & y_, const double r_ );                /** SR1 Hessian matrix update*/
     void increasing_schedule();                                                    /** function to increase rho = rho * gamma */
