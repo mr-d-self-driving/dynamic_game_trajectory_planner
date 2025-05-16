@@ -66,9 +66,9 @@ int main() {
     // Define traffic participants (3 vehicles approaching an intersection)
     TrafficParticipants traffic_intersection = {
         // x, y, v, psi, beta, a, v_target
-        {0.0, 0.0, 10.0, 0.0, 0.0, 1.0, 10.0},  // Vehicle 1 (moving along X)
-        {10.0, -10.0, 10.0, 1.57, 0.0, 1.0, 10.0}, // Vehicle 2 (coming from bottom Y)
-        {-10.0, 10.0, 10.0, -1.57, 0.0, 1.0, 10.0} // Vehicle 3 (coming from top Y)
+        {0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 10.0},  // Vehicle 1 (moving along X)
+        {10.0, -10.0, 5.0, 1.57, 0.0, 0.0, 10.0}, // Vehicle 2 (coming from bottom Y)
+        {20.0, 20.0, 0.0, -1.57, 0.0, 0.0, 10.0} // Vehicle 3 (coming from top Y)
     };
 
     // Generate center lanes for each vehicle
@@ -180,7 +180,7 @@ int main() {
 
     // Define traffic participants (2 vehicles in column)
     TrafficParticipants traffic_overtaking = {
-        // x, y, v, psi, beta, a
+        // x, y, v, psi, beta, a, v_target
         {0.0, 0.0, 2.0, 0.0, 0.0, 1.0, 5.0},  // Vehicle 1 (moving along X)
         {-12.0, 0.0, 10.0, 0.0, 0.0, 1.0, 10.0}, // Vehicle 2 (moving along X)
     };

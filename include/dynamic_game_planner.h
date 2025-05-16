@@ -25,8 +25,6 @@ private:
     constexpr static const int N = 20;                                  /** number of integration nodes */
     constexpr static const int nX = 6;                                  /** <X, Y, V, PSI, S, L> */
     constexpr static const int nU = 2;                                  /** <d, F> */
-    constexpr static const int N_interpolation = 60;
-    constexpr static const double dt_interpolation = 0.1;
 
 public:
     static const int nx = nX * (N + 1);                                 /** size of the state trajectory X_i for each vehicle */
@@ -89,9 +87,6 @@ public:
     void compute_squared_distances_vector(double* squared_distances_, const double* X_, 
                             int ego, int j);                                       /** computes a vector of the squared distance 
                                                                                         between the trajectory of vehicle i and j*/
-    void compute_safety_radius(double* r2_, const double* X_, 
-                            int ego, int j);                                       /** computes the safety radius between the ego vehicle 
-                                                                                        and vehicle j as vector in time */
     void compute_squared_lateral_distance_vector(double* squared_distances_, 
                             const double* X_, int i);                               /** computes a vector of the squared lateral distance 
                                                                                         between the i-th trajectory and the allowed center 
@@ -112,12 +107,9 @@ public:
                                                                                         trust region ||s|| < Delta */
     void constraints_diagnostic(const double* constraints, bool print);             /** shows violated constraints */
     void print_trajectories(const double* X, const double* U);                      /** prints trajectories */
-    double compute_acceleration(const tk::spline & spline_v, double t);              /** computes the acceleration on the spline s(t) at time t*/
     TrafficParticipants set_prediction(const double* X_, const double* U_);         /** sets the prediction to the traffic structure */
     double compute_heading(const tk::spline & spline_x, 
                            const tk::spline & spline_y, double s);                  /** computes the heading on the spline x(s) and y(s) at parameter s */
-    double compute_curvature(const tk::spline & spline_x, 
-                             const tk::spline & spline_y, double s);                 /** computes the curvature on the spline x(t) and y(t) at time t*/
     double gradient_norm(const double* gradient);                                               /** computes the norm of the gradient */
     void correctionU(double* U_);                                                    /** corrects U if outside the boundaries */
 };

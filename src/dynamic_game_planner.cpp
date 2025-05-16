@@ -122,7 +122,7 @@ void DynamicGamePlanner::integrate(double* X_, const double* U_)
             sr_t0[x] = traffic[i].centerlane.spline_x(s_ref);
             sr_t0[y] =traffic[i].centerlane.spline_y(s_ref);
             sr_t0[psi] = traffic[i].centerlane.compute_heading(s_ref);
-            sr_t0[v] = traffic[i].v_target; 
+            sr_t0[v] = traffic[i].v +  j * (traffic[i].v_target - traffic[i].v) / N; 
 
             // Input control:
             u_t0[d] = U_[tu + d];
@@ -539,12 +539,6 @@ void DynamicGamePlanner::print_trajectories(const double* X, const double* U)
     }
 }
 
-/** computes the acceleration on the spline s(t) at time t*/
-double DynamicGamePlanner::compute_acceleration(const tk::spline & spline_v, double t)
-{
-    return spline_v.deriv(1, t);
-}
-
 /** sets the prediction to the traffic structure*/
 TrafficParticipants DynamicGamePlanner::set_prediction(const double* X_, const double* U_)
 {
@@ -552,52 +546,24 @@ TrafficParticipants DynamicGamePlanner::set_prediction(const double* X_, const d
     for (int i = 0; i < M; i++){
         Trajectory trajectory;
         Control control;
-        tk::spline spline_x;
-        tk::spline spline_y;
-        tk::spline spline_v;
-        tk::spline spline_d;
-        std::vector<double> x_;
-        std::vector<double> y_;
-        std::vector<double> v_;
-        std::vector<double> d_;
-        std::vector<double> t_;
         double time = 0.0;
-        x_.push_back(traffic_[i].x);
-        y_.push_back(traffic_[i].y);
-        v_.push_back(traffic_[i].v);
-        d_.push_back(0.5 * traffic_[i].beta);
-        t_.push_back(time);
-        for (int j = 0; j < N + 1; j++){
-            time = time + dt;
-            x_.push_back(X_[nx * i + nX * j + x]);
-            y_.push_back(X_[nx * i + nX * j + y]);
-            v_.push_back(X_[nx * i + nX * j + v]);
-            d_.push_back(U_[nu * i + nU * j + d]);
-            t_.push_back(time);
-        }
-        spline_x = tk::spline(t_, x_);
-        spline_y = tk::spline(t_, y_);
-        spline_v = tk::spline(t_, v_);
-        spline_d = tk::spline(t_, d_);
-        time = 0.0;
 
-        for (int j = 0; j < N_interpolation; j++){
+        for (int j = 0; j < N + 1; j++){
             TrajectoryPoint point;
             Input input;
-            input.a = compute_acceleration(spline_v, time);
-            input.delta = spline_d(time);
-            point.x = spline_x(time);
-            point.y = spline_y(time);
-            point.psi = compute_heading(spline_x, spline_y, time);
-            point.v = spline_v(time);
-            point.k = compute_curvature(spline_x, spline_y, time);
-            point.omega = point.k * point.v;
+            input.a = (-1/tau) * X_[ nx * i + nX * j + v] + (k) * U_[nu * i + nU * j + F];
+            input.delta = U_[nu * i + nU * j + d];
+            point.x = X_[ nx * i + nX * j + x];
+            point.y = X_[ nx * i + nX * j + y];
+            point.psi = X_[ nx * i + nX * j + psi];
+            point.v = X_[ nx * i + nX * j + v];
+            point.omega = point.v * tan(input.delta) * cos(cg_ratio * input.delta)/ length;
             point.beta = 0.5 * input.delta;
             point.t_start = time;
-            point.t_end = time + dt_interpolation;
+            point.t_end = time + dt;
             trajectory.push_back(point);
             control.push_back(input);
-            time += dt_interpolation;
+            time += dt;
         }
         traffic_[i].predicted_trajectory = trajectory;
         traffic_[i].predicted_control = control;
@@ -614,18 +580,6 @@ double DynamicGamePlanner::compute_heading( const tk::spline & spline_x, const t
     psi = atan2(dy, dx);
     if(psi < 0.0) {psi += 2*M_PI;}
     return psi;
-}
-
-/** computes the curvature on the spline x(t) and y(t) at time t*/
-double DynamicGamePlanner::compute_curvature(const tk::spline & spline_x, const tk::spline & spline_y, double s)
-{
-    double k;
-    double dx = spline_x.deriv(1, s);
-    double dy = spline_y.deriv(1, s);
-    double ddx = spline_x.deriv(2, s);
-    double ddy = spline_y.deriv(2, s);
-    k = (ddy * dx - ddx * dy) / sqrt((dx * dx + dy * dy) * (dx * dx + dy * dy) * (dx * dx + dy * dy));
-    return k;
 }
 
 /** computes the norm of the gradient */
@@ -648,7 +602,7 @@ void DynamicGamePlanner::trust_region_solver(double* U_)
     double r_ = 1e-8;
     double threshold_gradient_norm = M * 1e-2;
     int iter = 1;
-    int iter_lim = 200;
+    int iter_lim = 20;
 
     // Variables definition:
     double gradient[nG];

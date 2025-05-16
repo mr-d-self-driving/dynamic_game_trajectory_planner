@@ -11,7 +11,6 @@ struct TrajectoryPoint {
     double v;       /** speed */
     double omega;   /** yaw rate */
     double beta;    /** slip angle */
-    double k;       /** curvature */
     double s;       /** progression */   
     double t_start; /** starting time of the point*/
     double t_end;   /** ending time of the point*/
