@@ -62,3 +62,18 @@ If everything works, you should see the plot of the computed trajectories in thr
 ![Trajectories](media/Trajectories_dynamic_game.png)
 Some information, including the trajectory points for each vehicle, are printed in the terminal.
 To create a new scenario to test, please refer to the main.cpp file, where the three scenarios above mentioned are created.
+
+## Reference
+If you find this repo to be useful in your research, please consider citing our work
+```bash
+@ARTICLE{10793110,
+  author={Lucente, Giovanni and Maarssoe, Mikkel Skov and Konthala, Sanath Himasekhar and Abulehia, Anas and Dariani, Reza and Schindler, Julian},
+  journal={IEEE Open Journal of Intelligent Transportation Systems}, 
+  title={DeepGame-TP: Integrating Dynamic Game Theory and Deep Learning for Trajectory Planning}, 
+  year={2024},
+  volume={5},
+  number={},
+  pages={873-888},
+  keywords={Trajectory planning;Planning;Training;Deep learning;Safety;Real-time systems;Nash equilibrium;Imitation learning;Game theory;Long short term memory;Dynamic game;deep learning;generalized Nash equilibrium;LSTM;trajectory planning},
+  doi={10.1109/OJITS.2024.3515270}}
+```
