@@ -64,7 +64,7 @@ Some information, including the trajectory points for each vehicle, are printed 
 To create a new scenario to test, please refer to the main.cpp file, where the three scenarios above mentioned are created.
 
 ## Reference
-If you find this repo to be useful in your research, please consider citing our work
+If you find this repo to be useful in your research, please consider citing our work:
 ```bash
 @ARTICLE{10793110,
   author={Lucente, Giovanni and Maarssoe, Mikkel Skov and Konthala, Sanath Himasekhar and Abulehia, Anas and Dariani, Reza and Schindler, Julian},
