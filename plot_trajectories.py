@@ -28,8 +28,8 @@ def plot_trajectories(df, scenario_name, ax):
             x_start, y_start, psi_start = x_vals[0], y_vals[0], psi_vals[0]
 
             # Vehicle dimensions
-            vehicle_length = 4.5  # meters
-            vehicle_width = 2.0  # meters
+            vehicle_length = 4.2  # meters
+            vehicle_width = 1.8  # meters
 
             # Compute bottom-left corner, considering both length & width
             x_corner = x_start - (vehicle_length / 2) * np.cos(psi_start) + (vehicle_width / 2) * np.sin(psi_start)

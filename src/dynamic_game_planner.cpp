@@ -602,7 +602,7 @@ void DynamicGamePlanner::trust_region_solver(double* U_)
     double r_ = 1e-8;
     double threshold_gradient_norm = M * 1e-2;
     int iter = 1;
-    int iter_lim = 20;
+    int iter_lim = 50;
 
     // Variables definition:
     double gradient[nG];

@@ -10,5 +10,7 @@ set(source_files
     src/vehicle_state.cpp
 )
 
+set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
+
 add_executable(dynamic_game_trajectory_planner ${source_files})
 

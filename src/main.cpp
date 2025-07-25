@@ -63,12 +63,17 @@ int main() {
     //---------------------------------------- INTERSECTION --------------------------------------------------------
     std::cerr<<"------------------------ Intersection Scenario -----------------------------"<<"\n";
 
-    // Define traffic participants (3 vehicles approaching an intersection)
+    // Define traffic participants (multiple vehicles approaching an intersection)
     TrafficParticipants traffic_intersection = {
         // x, y, v, psi, beta, a, v_target
-        {0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 10.0},  // Vehicle 1 (moving along X)
-        {10.0, -10.0, 5.0, 1.57, 0.0, 0.0, 10.0}, // Vehicle 2 (coming from bottom Y)
-        {20.0, 20.0, 0.0, -1.57, 0.0, 0.0, 10.0} // Vehicle 3 (coming from top Y)
+        {0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 10.0},  // Vehicle 1 (moving along X)
+        {10.0, -10.0, 0.0, 1.57, 0.0, 1.0, 10.0}, // Vehicle 2 (coming from bottom Y)
+        {-10.0, 10.0, 0.0, -1.57, 0.0, 1.0, 10.0}, // Vehicle 3 (coming from top Y)
+        {-10.0, -10.0, 0.0, 0.0, 0.0, 1.0, 10.0}, // Vehicle 4 (moving along X)
+        {0.0, 10.0, 0.0, 0.0, 0.0, 1.0, 10.0},  // Vehicle 5 (moving along X)
+        {20.0, 20.0, 0.0, -1.57, 0.0, 1.0, 10.0}, // Vehicle 6 (coming from top Y)
+        //{10.0, 10.0, 0.0, 3.14, 0.0, 1.0, 10.0}, // Vehicle 7 (moving backward X)
+        //{0.0, -10.0, 0.0, 1.57, 0.0, 1.0, 10.0}, // Vehicle 8 (coming from bottom Y)
     };
 
     // Generate center lanes for each vehicle
@@ -87,6 +92,21 @@ int main() {
             } else if (i == 2) {
                 x_vals.push_back(traffic_intersection[i].x);
                 y_vals.push_back(traffic_intersection[i].y - j * 5.0); // Move downward in Y
+            } else if (i == 3) {
+                x_vals.push_back(traffic_intersection[i].x + j * 5.0); // Move forward in X
+                y_vals.push_back(traffic_intersection[i].y); 
+            } else if (i == 4) { 
+                x_vals.push_back(traffic_intersection[i].x + j * 5.0); // Move forward in X
+                y_vals.push_back(traffic_intersection[i].y);
+            } else if (i == 5) { 
+                x_vals.push_back(traffic_intersection[i].x);
+                y_vals.push_back(traffic_intersection[i].y - j * 5.0); // Move downward in Y
+            } else if (i == 6) {
+                x_vals.push_back(traffic_intersection[i].x - j * 5.0); // Move backward in X
+                y_vals.push_back(traffic_intersection[i].y); 
+            } else if (i == 7) {
+                x_vals.push_back(traffic_intersection[i].x);
+                y_vals.push_back(traffic_intersection[i].y + j * 5.0); // Move downward in Y
             }
             s_vals.push_back(j * 5.0);
         }
